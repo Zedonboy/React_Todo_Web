@@ -58,9 +58,11 @@ export default class App extends React.Component {
                 <BT.Panel.Body>
                   <BT.Form>
                     <BT.InputGroup>
-                      <BT.FormControl placeholder="click on the '+' to add Todo" type="text" />
+                      <BT.FormControl placeholder="click on the '+' to add Todo" type="text" value={this.state.tempTodo.title} onChange={this.handleChange} />
                       <BT.InputGroup.Addon>
-                        <BT.Glyphicon glyph="list-alt" />
+                        <BT.Button onClick={this.add}>
+                          <BT.Glyphicon glyph="list-alt" />
+                        </BT.Button>
                       </BT.InputGroup.Addon>
                     </BT.InputGroup>
                   </BT.Form>
@@ -76,9 +78,7 @@ export default class App extends React.Component {
               <BT.Col xs={12} md={6} sm={12} lg={6}>
                 <BT.Panel>
                   <BT.Panel.Heading>Done Tasks</BT.Panel.Heading>
-                  <BT.Panel.Body>
-                    {DONE}
-                  </BT.Panel.Body>
+                  <BT.Panel.Body>{DONE}</BT.Panel.Body>
                 </BT.Panel>
               </BT.Col>
               {/* UNDONE TASKS */}
