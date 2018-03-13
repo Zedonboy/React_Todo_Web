@@ -11,7 +11,6 @@ export default class App extends React.Component {
     super(prop)
     this.storage = new Store();
     this.done = this.done.bind(this);
-    this.edit = this.edit.bind(this);
     this.add = this.add.bind(this);
     this.undone = this.undone.bind(this);
     this.modalCompleteness = this.modalCompleteness.bind(this);
@@ -27,13 +26,15 @@ export default class App extends React.Component {
   tempTodo : Todo // Todo Object
 
   state = {
-    todolist : Array<Todo>(new Todo('love'), new Todo('saturday')),
+    todolist : Array<Todo>(),
     tempTodo : new Todo(),
-    showModal : false
+    showModal : false,
+    tempText : ''
   }
 
   componentWillMount () {
     this.state.todolist = this.storage.getState();
+    console.log(this.storage.getState());
   }
 
   render() {
@@ -56,16 +57,16 @@ export default class App extends React.Component {
               <BT.Panel>
                 <BT.Panel.Heading>Add Todo</BT.Panel.Heading>
                 <BT.Panel.Body>
-                  <BT.Form>
+                  <BT.FormGroup>
                     <BT.InputGroup>
-                      <BT.FormControl placeholder="click on the '+' to add Todo" type="text" value={this.state.tempTodo.title} onChange={this.handleChange} />
-                      <BT.InputGroup.Addon>
+                      <BT.InputGroup.Button>
                         <BT.Button onClick={this.add}>
                           <BT.Glyphicon glyph="list-alt" />
                         </BT.Button>
-                      </BT.InputGroup.Addon>
+                      </BT.InputGroup.Button>
+                      <BT.FormControl type="text" placeholder="click on the button by the right" value={this.state.tempTodo.title} onChange={this.handleChange} />
                     </BT.InputGroup>
-                  </BT.Form>
+                  </BT.FormGroup>
                 </BT.Panel.Body>
               </BT.Panel>
             </BT.Col>
@@ -97,7 +98,7 @@ export default class App extends React.Component {
           <BT.Modal.Header closeButton>Edit Todo</BT.Modal.Header>
           <BT.Modal.Body>
             <BT.Form>
-              <BT.FormControl type="text" value={this.state.tempTodo.title} placeholder="Edit Todo Title" onChange={this.handleChange} />
+              <BT.FormControl type="text" value={this.state.tempText} placeholder="Edit Todo Title" onChange={this.handleChange} />
             </BT.Form>
           </BT.Modal.Body>
           <BT.Modal.Footer>
@@ -115,7 +116,8 @@ export default class App extends React.Component {
     this.state.todolist.splice(key,1);
     this.setState({
       todolist : this.state.todolist
-    })
+    });
+     this.storage.setState(this.state.todolist);
   }
 
   modalCompleteness (state : boolean) : void {
@@ -126,69 +128,60 @@ export default class App extends React.Component {
       this.modalUndone(this.state.tempTodo.key);
     }
   }
-
-  /**
-   * @param key
-   * @argument number
-   * @description A function called when edit button is pressed
-   */
-  edit(key : any) : void {
-   this.state.todolist[key].title = this.state.tempTodo.title;
-   this.state.todolist[key].done = this.state.tempTodo.done;
-   this.storage.setState(this.state.todolist);
-   this.setState({
-     todolist : this.state.todolist
-   })
-  }
-
   /**
    * @argument none
    * @author Declan Nnadozie
    * @description A function called when the user adds new todo
    */
   add() : void {
+    let tempTodo = new Todo(this.state.tempText)
+    tempTodo.key = this.state.todolist.length;
+    this.state.todolist.push(tempTodo);
     this.setState({
-      todolist : this.state.todolist.push(this.state.tempTodo)
+      todolist : this.state.todolist
     });
      this.storage.setState(this.state.todolist);
   }
 
   /**
    * @argument key
-   * @description A function call when users does a todo
+   * @description A function call when users clicks on Done in modal
    */
   modalDone(key : number) : void {
     alert(key)
-    this.state.todolist[key].done = this.state.tempTodo.done
-     this.storage.setState(this.state.todolist);
+    this.state.todolist[key].done = this.state.tempTodo.done;
+    this.state.todolist[key].title = this.state.tempText;
     this.setState({ 
       todolist: this.state.todolist,
       showModal : false
      });
+     this.storage.setState(this.state.todolist);
   }
 
   done (key : number) : void {
     this.state.todolist[key].done = true;
-    this.storage.setState(this.state.todolist);
     this.setState({
       todolist : this.state.todolist
     })
+    this.storage.setState(this.state.todolist);
   }
 
   undone (key : number) : void {
-    alert('undone');
+    alert(key);
     this.state.todolist[key].done = false;
     this.setState({ todolist: this.state.todolist });
+     this.storage.setState(this.state.todolist);
   }
 
    /**
    * @argument key
-   * @description A function call when users does a undones
+   * @description A function call when users clicks on Undone in the modal
    */
   modalUndone(key : number) : void {
     this.state.todolist[key].done = this.state.tempTodo.done;
-    this.storage.setState(this.state.todolist);
+    this.state.todolist[key].title = this.state.tempText;
     this.setState({ todolist: this.state.todolist, showModal: false });
+    this.storage.setState(this.state.todolist);
   }
 
   modalClose () : void {
@@ -199,15 +192,16 @@ export default class App extends React.Component {
 
   handleChange(e: any) {
     this.setState({ 
-      tempTodo: {title : e.target.value }
+      tempText: e.target.value
     });
   }
 
   aboutToEdit (key : number) : void {
-    this.state.tempTodo = this.state.todolist[key];
-    this.state.tempTodo.key = key;
+    let tempTodo = this.state.todolist[key];
+    tempTodo.key = key;
+    this.state.tempText = tempTodo.title;
     this.setState({
-      tempTodo : this.state.tempTodo,
+      tempTodo : tempTodo,
       showModal : true
     })
   }

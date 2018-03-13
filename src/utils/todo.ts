@@ -1,13 +1,23 @@
 export class Todo {
-    private id: number;
+    private id: number = 0;
     /**
      * 
      * @param title 
      * @author Declan Nnadozie
      * @description  A Todo Class/Object
      */
+    /**
+     * static createInstane
+     */
+    public static createInstance(todo : {id : number, name : string, completed : boolean}) : Todo {
+        let tempTodo = new Todo();
+        tempTodo.key = todo.id;
+        tempTodo.done = todo.completed;
+        tempTodo.title = todo.name
+        return tempTodo;
+    }
     constructor(title? : string ) {
-        this.name = title || '';
+        this.name = title
         this.completed = false
     }
     name : string;

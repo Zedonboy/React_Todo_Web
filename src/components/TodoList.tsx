@@ -20,19 +20,19 @@ export default class AddTodo extends React.Component<Property> {
     this.handleDelete = this.handleDelete.bind(this);
   }
   handleEdit () {
-    this.props.onEdit(this.props.idKey);
+    this.props.onEdit(this.props.todo.key);
   }
   handleDone () {
-    this.props.onDone(this.props.idKey);
+    this.props.onDone(this.props.todo.key);
   }
   handleDelete () {
-    this.props.onDelete(this.props.idKey);
+    this.props.onDelete(this.props.todo.key);
   }
   handleUndone () {
-    this.props.onUndone(this.props.idKey);
+    this.props.onUndone(this.props.todo.key);
   }
   render() {
-    return <BT.ListGroupItem header={this.props.todo.title} key={this.props.idKey}>
+    return <BT.ListGroupItem header={this.props.todo.title ? this.props.todo.title : this.props.todo.name} key={this.props.idKey}>
         <BT.Row>
           <BT.Col lg={8} />
           <BT.Col lg={4}>
